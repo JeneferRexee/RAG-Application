@@ -1,0 +1,7 @@
+{
+    "Input_Folder": "input",
+    "Output_Folder": "output",
+    "Log_Folder": "logs",
+    "Ocr_Folder":"ocr",
+    "log_file":"logs/app.log"
+}
