@@ -99,5 +99,3 @@ async def upload_pdf(background_tasks: BackgroundTasks,
         "message": "Your file is being processed",
         "ocr_json": str(ocr_file)
     }
-if (__name__) == "__main__":
-    app.run(host='0.0.0.0',port=8000)
