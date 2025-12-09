@@ -1,25 +1,34 @@
-from fastapi import FastAPI, File, UploadFile, BackgroundTasks, Form
+# worker.py
+
+from fastapi import FastAPI, File, UploadFile, Form
 import os
 import logging
-import uvicorn
 from pathlib import Path
 import shutil
 import pdfplumber
 import json
+from multiprocessing import Process
 from config_load import load_config
+from retrieve import process_rag_pipeline
+from rag_llm import run_team3_rag
+import uvicorn
+
 # ------------------ CONFIG SETUP ------------------
 app = FastAPI()
-config=load_config()
-    
+config = load_config()
+
 UPLOAD_DIR = Path("input")
 OCR_DIR = Path("ocr")
+OUT_DIR = Path("output")
 LOG_DIR = Path("logs")
-logfile=config["log_file"]
+RET_DIR = Path("retrieval")
+
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 OCR_DIR.mkdir(parents=True, exist_ok=True)
 LOG_DIR.mkdir(parents=True, exist_ok=True)
+RET_DIR.mkdir(parents=True, exist_ok=True)
 
-# --------------------- LOGGING SETUP ----------------
+# ------------------ LOGGING SETUP ------------------
 logging.basicConfig(
     filename=LOG_DIR / "app.log",
     level=logging.INFO,
@@ -61,38 +70,52 @@ def extract_text(pdf_path: str):
     return results
 
 # ------------------ BACKGROUND WORKER ------------------
-def background_process(pdf_path: str, ocr_file: str, query: str):
+def background_process(pdf_path: str, ocr_file: str, ret_file: str, llm_file: str, query: str):
+    print("Background task started for:", pdf_path)
     try:
-        ocr_path = Path(ocr_file)
-        ocr_path.parent.mkdir(parents=True, exist_ok=True)
+        # Ensure folders exist
+        Path(ocr_file).parent.mkdir(parents=True, exist_ok=True)
+        Path(ret_file).parent.mkdir(parents=True, exist_ok=True)
+        Path(llm_file).parent.mkdir(parents=True, exist_ok=True)
 
+        # Extract text from PDF
         pages_data = extract_text(pdf_path)
+        result_json = {"query": query, "pages": pages_data}
 
-        result_json = {
-            "query": query,
-            "pages": pages_data
-        }
-
-        with open(ocr_path, "w", encoding="utf-8") as f:
+        # Save OCR JSON
+        with open(ocr_file, "w", encoding="utf-8") as f:
             json.dump(result_json, f, indent=4)
+        logger.info(f"OCR processing completed: {ocr_file}")
 
-        logger.info(f"Processing completed: {ocr_path}")
+        # RAG Retrieval
+        process_rag_pipeline(ocr_file, output_path=ret_file)
+        logger.info(f"RAG retrieval completed: {ret_file}")
+
+        # LLM Generation
+        run_team3_rag(input_json_path=ret_file, output_json_path=llm_file)
+        logger.info(f"LLM generation completed: {llm_file}")
 
     except Exception as e:
         logger.error(f"Worker failed for {pdf_path}: {e}", exc_info=True)
 
-# ------------------ FASTAPI STARTING ROUTE ------------------
+# ------------------ MULTIPROCESS SPAWNER ------------------
+def start_background_process(pdf_path, ocr_file, ret_file, llm_file, query):
+    p = Process(target=background_process, args=(pdf_path, ocr_file, ret_file, llm_file, query))
+    p.start()  
+
+# ------------------ FASTAPI ROUTE ------------------
 @app.post("/upload-pdf/")
-async def upload_pdf(background_tasks: BackgroundTasks,
-                     file: UploadFile = File(...),
-                     query: str = Form(...)):
+async def upload_pdf(file: UploadFile = File(...), query: str = Form(...)):
     pdf_path, error = data_validation(file)
     if error:
         return {"status": "error", "message": error}
 
     ocr_file = OCR_DIR / f"{Path(pdf_path).stem}.json"
+    ret_file = RET_DIR / f"{Path(pdf_path).stem}.json"
+    llm_file = OUT_DIR / f"{Path(pdf_path).stem}.json"
 
-    background_tasks.add_task(background_process, pdf_path, str(ocr_file), query)
+    # Start multiprocessing task
+    start_background_process(str(pdf_path), str(ocr_file), str(ret_file), str(llm_file), query)
 
     return {
         "status": "queued",

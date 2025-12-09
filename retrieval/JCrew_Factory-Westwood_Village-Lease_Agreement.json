@@ -1,0 +1,25 @@
+{
+    "query": "extract the tenant name and address",
+    "retrieved_chunks": [
+        {
+            "text": "Tenant\u2019s Records",
+            "page": 22
+        },
+        {
+            "text": "Disposition of Tenant\u2019s Property",
+            "page": 61
+        },
+        {
+            "text": "Landlord may require a statement from Tenant 45 #13741219v1\\018998\\0187",
+            "page": 46
+        },
+        {
+            "text": "Tenant\u2019s Reports",
+            "page": 22
+        },
+        {
+            "text": "Tenant shall reimburse Landlord, as Additional Rent, any and all fees or charges imposed by such mortgagee in connection 56 #13741219v1\\018998\\0187",
+            "page": 57
+        }
+    ]
+}

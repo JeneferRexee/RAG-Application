@@ -1,0 +1,25 @@
+{
+    "query": "extract the vitals",
+    "retrieved_chunks": [
+        {
+            "text": "Review of patient's allergies indicates: No Known Allergies Physical Examination Vitals: 10/09/24 0823 BP: 133/63 Pulse: 62 Resp: 16 SpO2: (!) 94% Weight: 84",
+            "page": 5
+        },
+        {
+            "text": "Please review within this context and contact this physician if you find or perceive Generated on 10/30/24 11:39 AM Page 6",
+            "page": 6
+        },
+        {
+            "text": "Physical Exam Health Maintenance / Imaging / Labs Generated on 10/30/24 11:39 AM Page 5",
+            "page": 5
+        },
+        {
+            "text": "9] Specimen Information ID Type Source Collected By 24OLSH- Blood Blood 10/09/24 0846 283H0221 CBC Auto Differential [1096741733] CBC with Differential [1180377578] (Abnormal) Resulted: 10/09/24 1926, Result status: Final result Order status: Completed Filed by: Lab, Background User 10/09/24 1926 Collected by: Brown, Shaquerra, CMA 10/09/24 0846 Resulting lab: OCHSNER LSU HEALTH SHREVEPORT Components Reference Component Value Range Flag Lab WBC 8",
+            "page": 9
+        },
+        {
+            "text": "9] Specimen Information ID Type Draw Type Source Collected By 24OLSH- Blood Venipuncture Blood Brown, Shaquerra, CMA 283H0221 10/09/24 0846 CBC with Differential [1180377578] (Abnormal) Resulted: 10/09/24 1926, Result status: Final result Order status: Completed Filed by: Lab, Background User 10/09/24 1926 Collected by: Brown, Shaquerra, CMA 10/09/24 0846 Resulting lab: OCHSNER LSU HEALTH SHREVEPORT Components Component Value Reference Range Flag Lab WBC 8",
+            "page": 11
+        }
+    ]
+}
