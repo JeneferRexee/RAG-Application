@@ -1,3 +1,8 @@
+<<<<<<< HEAD
 {
     "result": "If you don't know the answer, just say that you don't know. In this context, \"Tenant shall\" refers to a specific tenant in question. Therefore, if you don't know the specific tenant or their address, you can't extract it from Landlord's records."
+=======
+{
+    "result": "Use the following context:\n\nLandlord's Rent The address set forth below or such other rent payment address Payment Address: established by Landlord from time to time by the delivery of written notice thereof to Tenant\n\nLandlord may require a statement from Tenant 45 #13741219v1\\018998\\0187"
+>>>>>>> fab8d8c1ff43ecc33d26472476ce7f28dd789895
 }
